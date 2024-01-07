@@ -3,7 +3,7 @@ import time
 import sys
 import locale
 
-locale.setlocale( locale.LC_ALL, '' )
+locale.setlocale(locale.LC_ALL, '')
 
 class bcolors:
     HEADER = '\033[95m'
@@ -34,6 +34,12 @@ def slow_print(s):
         sys.stdout.flush()
         time.sleep(0.05)
 
+def slower_print(s):
+  for c in s:
+        sys.stdout.write(c)
+        sys.stdout.flush()
+        time.sleep(0.15)
+
 def populateCases(d):
   # dictionary to store all the briefcases with dollar amounts in them
   cases = {}
@@ -47,10 +53,11 @@ def populateCases(d):
   return cases
 
 slow_print(f'\n\n{bcolors.HEADER}WELCOME TO DEAL OR NO DEAL!{bcolors.ENDC}\n\nPick one of the 26 cases below\n')
-cases_in_play = list(populateCases(DOLLAR_AMOUNTS).keys())
+cases_dict = populateCases(DOLLAR_AMOUNTS)
+cases_in_play = list(cases_dict.keys())
 print(*cases_in_play)
-print(populateCases(DOLLAR_AMOUNTS))
-USER_SELECTION = None
+print(cases_dict)
+USER_SELECTION = int
 
 while True:
   try:
@@ -63,36 +70,34 @@ while True:
     print("\nInvalid. Please choose a case number from the above\n")
 
 slow_print(f"\n\nYou selected case: {bcolors.OKGREEN}{USER_SELECTION}{bcolors.ENDC}\n\n")
-last_case_to_open = {USER_SELECTION: cases_in_play[USER_SELECTION-1]}
-print(last_case_to_open)
-del cases_in_play[USER_SELECTION-1]
+# print(USER_SELECTION)
+last_case_to_open = {USER_SELECTION: cases_dict.get(USER_SELECTION)}
+# print(last_case_to_open)
+
+del cases_dict[USER_SELECTION]
 time.sleep(1)
-slow_print(f"{bcolors.YELLOW}Let's play Deal or No Deal!{bcolors.ENDC}\n\nYou will now select 6 cases to open.\n\n")
+slow_print(f"{bcolors.YELLOW}Let's play {bcolors.BOLD}Deal or No Deal!{bcolors.ENDC}{bcolors.ENDC}\n\nYou will now select 6 cases to open.\n\n")
 
 case_to_open = None
 
 while True:
   try:
     case_to_open = int(input("\nWhat case do you want to open? "))
-    if (1 <= case_to_open <= 26) and case_to_open in cases_in_play:
+    if (1 <= case_to_open <= 26) and case_to_open in cases_dict:
       break
     else:
       print("\nPlease select case between 1 and 26 that is in play.")
   except ValueError:
     print("\nInvalid. Please choose a case number from the above\n")
 
-slow_print(f"\n\nYou picked {bcolors.CYAN}Case Number {case_to_open}{bcolors.ENDC}. Case Number {case_to_open} had:")
-slow_print(f"\n\n {bcolors.YELLOW} {locale.currency(cases_in_play[case_to_open-1], grouping=True)} {bcolors.ENDC}")
+slow_print(f"\n\nYou selected {bcolors.CYAN}Case Number {case_to_open}{bcolors.ENDC}. Case Number {case_to_open} had:")
+time.sleep(random.uniform(1.0, 2.3))
+slower_print(f"\n\n{bcolors.YELLOW}{locale.currency(cases_dict[case_to_open], grouping=True)}{bcolors.ENDC}")
 
-del cases_in_play[case_to_open-1]
+del cases_dict[case_to_open]
 
 slow_print(f"\n\nThe cases remaining are: \n\n")
-print(*cases_in_play)
+print(*list(cases_dict.keys()))
 
-## TODO: print the current board
-## TODO: need to consider dictionary element deletion, the order of the elements changes and this messes up the indexing
-## TODO: for some reason, accessing dictionary values from keys doesn't work as expected, need to debug
-
-
-
-
+## TODO: figure out how to handle the "rounds". routines? functions? understand how the game works mathematically/logically
+## TODO: figure out how the banker calculates the offer amount (likely some probabilistic method)
