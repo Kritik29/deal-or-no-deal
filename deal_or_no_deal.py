@@ -94,7 +94,7 @@ def open_case():
 
   while True:
     try:
-      case_to_open = int(input("\n\nWhat case do you want to open? "))
+      case_to_open = int(input("\n\nWhich case do you want to open? "))
       if (1 <= case_to_open <= 26) and case_to_open in cases_dict:
         break
       else:
@@ -150,6 +150,24 @@ def banker_offer():
 
   slower_print(f"\n\n{bcolors.GREEN}{locale.currency(offer, grouping=True)[:-3]}{bcolors.ENDC}")
 
+def deal_or_no_deal() -> int:
+  slow_print("\n\nNow, the question is.....")
+  slower_print(f"\n\n{bcolors.YELLOW}{bcolors.BOLD}Deal or No Deal? {bcolors.ENDC}{bcolors.ENDC}")
+
+  user_choice = ""
+
+  while True:
+    user_choice = str(input(""))
+    if user_choice.replace(" ", "").lower() in {"deal", "nodeal"}:
+      break
+    else:
+      print("\n\nPlease type either 'deal' or 'no deal'.\n\n")
+
+  if user_choice.lower().replace(" ", "") == "deal":
+    return 1
+  else:
+    return 0
+
 def round_1():
   num_cases_to_open = 5
   while num_cases_to_open >= 1:
@@ -167,5 +185,15 @@ def round_1():
     num_cases_to_open -= 1
 
 round_1()
+if deal_or_no_deal() == 1:
+  print("Deal was made, exit sequence")
+else:
+  print("go into round 2")
 
-## TODO: implement deal or no deal logic
+
+## TODO: implement all the rounds
+## TODO: implement the exit sequence
+## TODO: implement final round swap
+## TODO: instead of making each round a function, make a generic function for 
+## each round and pass in the number of cases to open in that round
+## TODO: if __name__ == main
