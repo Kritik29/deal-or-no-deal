@@ -2,6 +2,7 @@ import random
 import time
 import sys
 import locale
+from statistics import mean
 
 locale.setlocale(locale.LC_ALL, '')
 
@@ -27,6 +28,8 @@ class bcolors:
 DOLLAR_AMOUNTS = [0.01, 1, 5, 10, 25, 50, 75, 100, 200, 300, 400, 500, 750,
                   1000, 5000, 10000, 25000, 50000, 75000, 100000,
                   200000, 300000, 400000, 500000, 750000, 1000000]
+
+ev_offer_ratio = 0.35
 
 def slow_print(s):
   for c in s:
@@ -121,8 +124,31 @@ def show_remaining_dollar_amounts():
   formatted_dollar_amounts.insert(0, f"{bcolors.YELLOW}{locale.currency(dollar_amounts[0], grouping=True)}{bcolors.ENDC}")
   print(*formatted_dollar_amounts, sep=" | ")
 
+def calculate_expected_value(d: dict):
+  values = d.values()
+  expected_value = mean(values)
+  return expected_value
+
+def dynamic_offer_calculator():
+  activator = random.randint(0, 4)
+
+  if activator == 0:
+    x = random.uniform(0.11, 0.20)
+  else:
+    x = random.uniform(0.05, 0.10)
+
+  return round(x, 3)
+
 def banker_offer():
-  slow_print("\n\nRing Ring banker calling")
+  slow_print("\n☏") 
+  slow_print("\nThe Banker's calling and they've made you an offer.")
+  slow_print("\nThe Banker's offer is: ")
+
+  global ev_offer_ratio
+  offer = round((calculate_expected_value(cases_dict_copy) * ev_offer_ratio), 2)
+  ev_offer_ratio += dynamic_offer_calculator()
+
+  slower_print(f"\n\n{bcolors.GREEN}{locale.currency(offer, grouping=True)[:-3]}{bcolors.ENDC}")
 
 def round_1():
   num_cases_to_open = 5
@@ -142,4 +168,4 @@ def round_1():
 
 round_1()
 
-## TODO: figure out how the banker calculates the offer amount (likely some probabilistic method)
+## TODO: implement deal or no deal logic
