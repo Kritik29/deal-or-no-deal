@@ -38,9 +38,9 @@ def slower_print(s):
   for c in s:
         sys.stdout.write(c)
         sys.stdout.flush()
-        time.sleep(0.15)
+        time.sleep(0.25)
 
-def populateCases(d):
+def populate_cases(d):
   # dictionary to store all the briefcases with dollar amounts in them
   cases = {}
   local_dollar_amounts = list(d)
@@ -52,52 +52,94 @@ def populateCases(d):
   
   return cases
 
-slow_print(f'\n\n{bcolors.HEADER}WELCOME TO DEAL OR NO DEAL!{bcolors.ENDC}\n\nPick one of the 26 cases below\n')
-cases_dict = populateCases(DOLLAR_AMOUNTS)
-cases_in_play = list(cases_dict.keys())
-print(*cases_in_play)
-print(cases_dict)
+cases_dict = populate_cases(DOLLAR_AMOUNTS)
+# copy of cases_dict used to show the dollar amounts left on the board
+cases_dict_copy = dict(cases_dict)
+# print(cases_dict)
 USER_SELECTION = int
+last_case_to_open = {}
 
-while True:
-  try:
-    USER_SELECTION = int(input("\nYour selection: "))
-    if 1 <= USER_SELECTION <= 26:
-      break
-    else:
-      print("\nPlease select a number between 1 and 26.")
-  except ValueError:
-    print("\nInvalid. Please choose a case number from the above\n")
+def initial_sequence(user_case):
+  slow_print(f'\n\n{bcolors.HEADER}WELCOME TO DEAL OR NO DEAL!{bcolors.ENDC}\n\nPick one of the 26 cases below.\n\n')
+  print(*list(cases_dict.keys()))
 
-slow_print(f"\n\nYou selected case: {bcolors.OKGREEN}{USER_SELECTION}{bcolors.ENDC}\n\n")
-# print(USER_SELECTION)
-last_case_to_open = {USER_SELECTION: cases_dict.get(USER_SELECTION)}
+  while True:
+    try:
+      USER_SELECTION = int(input("\nYour selection: "))
+      if 1 <= USER_SELECTION <= 26:
+        break
+      else:
+        print("\nPlease select a number between 1 and 26.")
+    except ValueError:
+      print("\nInvalid. Please choose a case number from the above\n")
+
+  slow_print(f"\n\nYou selected case: {bcolors.OKGREEN}{USER_SELECTION}{bcolors.ENDC}\n\n")
+  # print(USER_SELECTION)
+  user_case = {USER_SELECTION: cases_dict.get(USER_SELECTION)}
+  # print(last_case_to_open)
+  del cases_dict[USER_SELECTION]
+  time.sleep(1)
+  slow_print(f"{bcolors.YELLOW}Let's play {bcolors.BOLD}Deal or No Deal!{bcolors.ENDC}{bcolors.ENDC}\n\nYou will now select 6 cases to open.\n\n")
+  return user_case
+
+last_case_to_open = initial_sequence(last_case_to_open)
+
 # print(last_case_to_open)
 
-del cases_dict[USER_SELECTION]
-time.sleep(1)
-slow_print(f"{bcolors.YELLOW}Let's play {bcolors.BOLD}Deal or No Deal!{bcolors.ENDC}{bcolors.ENDC}\n\nYou will now select 6 cases to open.\n\n")
+def open_case():
+  case_to_open = None
 
-case_to_open = None
+  while True:
+    try:
+      case_to_open = int(input("\n\nWhat case do you want to open? "))
+      if (1 <= case_to_open <= 26) and case_to_open in cases_dict:
+        break
+      else:
+        print("\nPlease select case between 1 and 26 that is in play.")
+    except ValueError:
+      print("\nInvalid. Please choose a case number from the above\n")
 
-while True:
-  try:
-    case_to_open = int(input("\nWhat case do you want to open? "))
-    if (1 <= case_to_open <= 26) and case_to_open in cases_dict:
-      break
-    else:
-      print("\nPlease select case between 1 and 26 that is in play.")
-  except ValueError:
-    print("\nInvalid. Please choose a case number from the above\n")
+  slow_print(f"\n\nYou selected {bcolors.CYAN}Case Number {case_to_open}{bcolors.ENDC}. Case Number {case_to_open} had:")
+  time.sleep(random.uniform(1.0, 2.3))
 
-slow_print(f"\n\nYou selected {bcolors.CYAN}Case Number {case_to_open}{bcolors.ENDC}. Case Number {case_to_open} had:")
-time.sleep(random.uniform(1.0, 2.3))
-slower_print(f"\n\n{bcolors.YELLOW}{locale.currency(cases_dict[case_to_open], grouping=True)}{bcolors.ENDC}")
+  if(cases_dict[case_to_open] == 0.01):
+    slower_print(f"\n\n{bcolors.YELLOW}{locale.currency(cases_dict[case_to_open], grouping=True)}{bcolors.ENDC}")
+  else:
+    slower_print(f"\n\n{bcolors.YELLOW}{locale.currency(cases_dict[case_to_open], grouping=True)[:-3]}{bcolors.ENDC}")
 
-del cases_dict[case_to_open]
+  del cases_dict[case_to_open]
+  del cases_dict_copy[case_to_open]
 
-slow_print(f"\n\nThe cases remaining are: \n\n")
-print(*list(cases_dict.keys()))
+def show_remaining_cases():
+  slow_print(f"\n\nThe cases remaining are: \n\n")
+  print(*list(cases_dict.keys()))
 
-## TODO: figure out how to handle the "rounds". routines? functions? understand how the game works mathematically/logically
+def show_remaining_dollar_amounts():
+  slow_print(f"\n\nThe dollar amounts still in play are: \n\n")
+  dollar_amounts = sorted(list(cases_dict_copy.values()))
+  formatted_dollar_amounts = [f"{bcolors.YELLOW}{locale.currency(_, grouping=True)[:-3]}{bcolors.ENDC}" for _ in dollar_amounts[1:]]
+  formatted_dollar_amounts.insert(0, f"{bcolors.YELLOW}{locale.currency(dollar_amounts[0], grouping=True)}{bcolors.ENDC}")
+  print(*formatted_dollar_amounts, sep=" | ")
+
+def banker_offer():
+  slow_print("\n\nRing Ring banker calling")
+
+def round_1():
+  num_cases_to_open = 5
+  while num_cases_to_open >= 1:
+    open_case()
+    show_remaining_cases()
+    show_remaining_dollar_amounts()
+    
+    if num_cases_to_open == 1:
+      slow_print("\nFinal case to open in this round.")
+      open_case()
+      show_remaining_cases()
+      show_remaining_dollar_amounts()
+      banker_offer()
+
+    num_cases_to_open -= 1
+
+round_1()
+
 ## TODO: figure out how the banker calculates the offer amount (likely some probabilistic method)
