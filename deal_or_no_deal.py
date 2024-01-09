@@ -87,9 +87,6 @@ def initial_sequence(user_case):
   return user_case
 
 last_case_to_open = initial_sequence(last_case_to_open)
-print(last_case_to_open)
-
-# print(last_case_to_open)
 
 def open_case():
   case_to_open = None
@@ -170,22 +167,6 @@ def deal_or_no_deal() -> int:
   else:
     return 0
 
-# def round_1():
-#   num_cases_to_open = 5
-#   while num_cases_to_open >= 1:
-#     open_case()
-#     show_remaining_cases()
-#     show_remaining_dollar_amounts()
-    
-#     if num_cases_to_open == 1:
-#       slow_print("\nFinal case to open in this round.")
-#       open_case()
-#       show_remaining_cases()
-#       show_remaining_dollar_amounts()
-#       banker_offer()
-
-#     num_cases_to_open -= 1
-
 # this function's input is the number of cases to open
 def game_round(n):
   if n > 1:
@@ -251,3 +232,5 @@ while cases_to_open == 1:
 
 ## TODO: test final round swap
 ## TODO: if __name__ == main
+## TODO: comment code
+## TODO: write README
