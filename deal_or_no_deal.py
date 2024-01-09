@@ -30,6 +30,7 @@ DOLLAR_AMOUNTS = [0.01, 1, 5, 10, 25, 50, 75, 100, 200, 300, 400, 500, 750,
                   200000, 300000, 400000, 500000, 750000, 1000000]
 
 ev_offer_ratio = 0.35
+cases_to_open = 6
 
 def slow_print(s):
   for c in s:
@@ -82,7 +83,7 @@ def initial_sequence(user_case):
   # print(last_case_to_open)
   del cases_dict[USER_SELECTION]
   time.sleep(1)
-  slow_print(f"{bcolors.YELLOW}Let's play {bcolors.BOLD}Deal or No Deal!{bcolors.ENDC}{bcolors.ENDC}\n\nYou will now select 6 cases to open.\n\n")
+  slow_print(f"{bcolors.YELLOW}Let's play {bcolors.BOLD}Deal or No Deal!{bcolors.ENDC}{bcolors.ENDC}\n")
   return user_case
 
 last_case_to_open = initial_sequence(last_case_to_open)
@@ -129,7 +130,7 @@ def calculate_expected_value(d: dict):
   expected_value = mean(values)
   return expected_value
 
-def dynamic_offer_calculator():
+def dynamic_ratio_offset_calculator():
   activator = random.randint(0, 4)
 
   if activator == 0:
@@ -146,7 +147,7 @@ def banker_offer():
 
   global ev_offer_ratio
   offer = round((calculate_expected_value(cases_dict_copy) * ev_offer_ratio), 2)
-  ev_offer_ratio += dynamic_offer_calculator()
+  ev_offer_ratio += dynamic_ratio_offset_calculator()
 
   slower_print(f"\n\n{bcolors.GREEN}{locale.currency(offer, grouping=True)[:-3]}{bcolors.ENDC}")
 
@@ -168,8 +169,26 @@ def deal_or_no_deal() -> int:
   else:
     return 0
 
-def round_1():
-  num_cases_to_open = 5
+# def round_1():
+#   num_cases_to_open = 5
+#   while num_cases_to_open >= 1:
+#     open_case()
+#     show_remaining_cases()
+#     show_remaining_dollar_amounts()
+    
+#     if num_cases_to_open == 1:
+#       slow_print("\nFinal case to open in this round.")
+#       open_case()
+#       show_remaining_cases()
+#       show_remaining_dollar_amounts()
+#       banker_offer()
+
+#     num_cases_to_open -= 1
+
+# this function's input is the number of cases to open
+def game_round(n):
+  slow_print(f"\n\nIn this round, you will open {n} cases.")
+  num_cases_to_open = n-1
   while num_cases_to_open >= 1:
     open_case()
     show_remaining_cases()
@@ -184,12 +203,19 @@ def round_1():
 
     num_cases_to_open -= 1
 
-round_1()
-if deal_or_no_deal() == 1:
-  print("Deal was made, exit sequence")
-else:
-  print("go into round 2")
+while cases_to_open >= 2:
+  game_round(cases_to_open)
+  if deal_or_no_deal() == 1:
+    print("Deal was made, exit sequence")
+    break
+  else:
+    cases_to_open -= 1
 
+# round_1()
+# if deal_or_no_deal() == 1:
+#   print("Deal was made, exit sequence")
+# else:
+#   print("go into round 2")
 
 ## TODO: implement all the rounds
 ## TODO: implement the exit sequence
