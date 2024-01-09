@@ -87,6 +87,7 @@ def initial_sequence(user_case):
   return user_case
 
 last_case_to_open = initial_sequence(last_case_to_open)
+print(last_case_to_open)
 
 # print(last_case_to_open)
 
@@ -155,16 +156,16 @@ def deal_or_no_deal() -> int:
   slow_print("\n\nNow, the question is.....")
   slower_print(f"\n\n{bcolors.YELLOW}{bcolors.BOLD}Deal or No Deal? {bcolors.ENDC}{bcolors.ENDC}")
 
-  user_choice = ""
+  user_deal_choice = ""
 
   while True:
-    user_choice = str(input(""))
-    if user_choice.replace(" ", "").lower() in {"deal", "nodeal"}:
+    user_deal_choice = str(input(""))
+    if user_deal_choice.replace(" ", "").lower() in {"deal", "nodeal"}:
       break
     else:
       print("\n\nPlease type either 'deal' or 'no deal'.\n\n")
 
-  if user_choice.lower().replace(" ", "") == "deal":
+  if user_deal_choice.lower().replace(" ", "") == "deal":
     return 1
   else:
     return 0
@@ -187,39 +188,66 @@ def deal_or_no_deal() -> int:
 
 # this function's input is the number of cases to open
 def game_round(n):
-  slow_print(f"\n\nIn this round, you will open {n} cases.")
-  num_cases_to_open = n-1
-  while num_cases_to_open >= 1:
-    open_case()
-    show_remaining_cases()
-    show_remaining_dollar_amounts()
-    
-    if num_cases_to_open == 1:
-      slow_print("\nFinal case to open in this round.")
+  if n > 1:
+    slow_print(f"\n\nIn this round, you will open {n} cases.")
+    num_cases_to_open = n-1
+    while num_cases_to_open >= 1:
       open_case()
       show_remaining_cases()
       show_remaining_dollar_amounts()
-      banker_offer()
+      
+      if num_cases_to_open == 1:
+        slow_print("\nFinal case to open in this round.")
+        open_case()
+        show_remaining_cases()
+        show_remaining_dollar_amounts()
+        banker_offer()
 
-    num_cases_to_open -= 1
+      num_cases_to_open -= 1
+
+  if n == 1:
+    slow_print(f"\n\nIn this round, you will open {n} case.")
+    open_case()
+    show_remaining_cases()
+    show_remaining_dollar_amounts()
+    banker_offer()
 
 while cases_to_open >= 2:
   game_round(cases_to_open)
   if deal_or_no_deal() == 1:
-    print("Deal was made, exit sequence")
+    slow_print(f"\n\n{bcolors.BOLD}{bcolors.GREEN}Congrats on your winnings!{bcolors.ENDC}, and thanks for playing!{bcolors.ENDC}")
     break
   else:
     cases_to_open -= 1
 
-# round_1()
-# if deal_or_no_deal() == 1:
-#   print("Deal was made, exit sequence")
-# else:
-#   print("go into round 2")
+while cases_to_open == 1:
+  game_round(cases_to_open)
+  if deal_or_no_deal() == 1:
+    slow_print(f"\n\n{bcolors.BOLD}{bcolors.GREEN}Congrats on your winnings!{bcolors.ENDC}, and thanks for playing!{bcolors.ENDC}")
+    break
+  if len(cases_dict) == 1:
+    slow_print("\n\nNow you have a very important decision to make.")
+    slow_print("\nWould you like to open your case now OR swap with the case still left in play (open or swap)? ")
 
-## TODO: implement all the rounds
-## TODO: implement the exit sequence
-## TODO: implement final round swap
-## TODO: instead of making each round a function, make a generic function for 
-## each round and pass in the number of cases to open in that round
+    user_swap_choice = ""
+    while True:
+      user_swap_choice = str(input(""))
+      if user_swap_choice.replace(" ", "").lower() in {"open", "swap"}:
+        break
+      else:
+        print("\n\nPlease type either 'open' or 'swap'.\n\n")
+    
+    if user_swap_choice.replace(" ", "").lower() in {"open"}:
+      slow_print("\n\nWe will now open the case you selected.")
+      slow_print(f"\nYour case, {bcolors.CYAN}case number {next(iter(last_case_to_open))}{bcolors.ENDC} has...")
+      slower_print(f"\n\n{bcolors.YELLOW}{locale.currency((last_case_to_open[next(iter(last_case_to_open))]), grouping=True)[:-3]}{bcolors.ENDC}")
+      slow_print(f"\n\n{bcolors.BOLD}{bcolors.GREEN}Congrats on your winnings!{bcolors.ENDC}, and thanks for playing!{bcolors.ENDC}")
+    else:
+      slow_print("\n\nYou chose to swap your case with the one currently in play.")
+      slow_print(f"\n\nThe case currently in play is {bcolors.CYAN}case number {next(iter(cases_dict))}{bcolors.ENDC}. This case has...")
+      slower_print(f"\n\n{bcolors.YELLOW}{locale.currency((cases_dict[next(iter(cases_dict))]), grouping=True)[:-3]}{bcolors.ENDC}")
+      slow_print(f"\n\n{bcolors.BOLD}{bcolors.GREEN}Congrats on your winnings!{bcolors.ENDC}, and thanks for playing!{bcolors.ENDC}")
+    break
+
+## TODO: test final round swap
 ## TODO: if __name__ == main

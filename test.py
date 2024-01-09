@@ -25,13 +25,23 @@ import random
 # print(random_num())
 
 
-user_choice = ""
+# user_choice = ""
 
-while user_choice.replace(" ", "").lower() not in {"deal", "nodeal"}:
-    try:
-      user_choice = str(input(" "))
-    except TypeError:
-      print("\n\nInvalid. Please type either 'deal' or 'no deal'.\n")
-    except ValueError:
-      print("\n\nPlease type either 'deal' or 'no deal'.")
+# while user_choice.replace(" ", "").lower() not in {"deal", "nodeal"}:
+#     try:
+#       user_choice = str(input(" "))
+#     except TypeError:
+#       print("\n\nInvalid. Please type either 'deal' or 'no deal'.\n")
+#     except ValueError:
+#       print("\n\nPlease type either 'deal' or 'no deal'.")
+
+# Example dictionary
+my_dict = {"key1": "value1"}
+
+# Accessing the key and value
+key = next(iter(my_dict))
+value = my_dict[key]
+
+# Printing key and value on separate lines
+print(f"Key:\n{key}\nValue:\n{value}")
 
