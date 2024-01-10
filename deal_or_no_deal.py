@@ -218,8 +218,7 @@ def game_round(n):
     show_remaining_dollar_amounts()
     banker_offer()
 
-# main game loop
-
+### MAIN GAME LOOP
 # for rounds with more than 2 cases to open, follow this structure
 while cases_to_open >= 2:
   game_round(cases_to_open)
