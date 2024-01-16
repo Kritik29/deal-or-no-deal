@@ -263,4 +263,5 @@ while cases_to_open == 1:
       print(colorama.Fore.GREEN + f"\n\nCongrats on your winnings!, and thanks for playing!")
     break
 
+# need this to stop pre-mature closing of .exe 
 input("\n\nPress ENTER to quit.")
